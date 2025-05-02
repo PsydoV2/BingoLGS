@@ -21,3 +21,6 @@ im loop bis max ziehungen:
 
 bei win jetons plus bei loose nichts
 spiel zurücksetzen
+
+![image](./Bingo.svg)
+
