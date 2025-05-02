@@ -3,7 +3,16 @@ public class Spielfeld {
     private String TRENNERVERT = "|";
     private String TRENNERHORZ = "";
 
-    public void fillBoard(){}
+    public void fillBoard(){
 
-    public void drawBoard(){}
+    }
+
+    public void drawBoard(){
+
+    }
+
+    public Feld[][] getSpielFeld() {
+        return spielFeld;
+    }
+
 }
