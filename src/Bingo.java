@@ -14,6 +14,6 @@ public class Bingo extends CasinospielBasis{
     }
 
     @Override
-    public void neuesSpiel() {
+    public void neuesSpiel() { k mwdadwa
     }
 }
