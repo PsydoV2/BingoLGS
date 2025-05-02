@@ -23,4 +23,5 @@ bei win jetons plus bei loose nichts
 spiel zurücksetzen
 
 ![image](./Bingo.svg)
+![image](./Aktivitätsdiagramm.svg)
 
