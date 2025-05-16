@@ -1,5 +1,7 @@
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello, World!");
+        CasinospielBasis bingo = new Bingo(new Spieler("Sepp", 100));
+        System.out.print(bingo.ersteNachricht());
+        System.out.print(bingo.verarbeiteEingabe("100"));
     }
 }
