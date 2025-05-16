@@ -13,15 +13,10 @@ im loop bis max ziehungen:
 
     random ziehung
     check auf doppelte
-    
+
     nach jeder ziehung check auf treffer
     wenn ja feld durch x ersetzen
     check ob win bedingung erfüllt sind
 
-
 bei win jetons plus bei loose nichts
 spiel zurücksetzen
-
-![image](./Bingo.svg)
-![image](./Aktivitätsdiagramm.svg)
-

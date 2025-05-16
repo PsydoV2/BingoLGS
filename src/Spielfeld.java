@@ -3,7 +3,6 @@ import java.util.*;
 public class Spielfeld {
     public Feld[][] spielFeld = new Feld[3][3]; // 3x3 Bingo-Feld
     private final String TRENNERVERT = "|";      // Trenner für Spalten
-    private final String TRENNERHORZ = "—";      // Trenner für Zeilen
     private final List<Integer> numbers = new ArrayList<>(); // Liste aller möglichen Zahlen
 
     // Füllt die Liste mit Zahlen von 1 bis 99 und mischt sie

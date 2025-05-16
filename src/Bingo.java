@@ -1,8 +1,7 @@
 import java.util.Random;
 
 public class Bingo extends CasinospielBasis {
-    private final Random random = new Random();
-    private Spielfeld spielfeld = new Spielfeld();
+    private final Spielfeld spielfeld = new Spielfeld();
     private boolean gameEnd = false;
     private boolean gameWon = false;
     private int einsatz = 0;
