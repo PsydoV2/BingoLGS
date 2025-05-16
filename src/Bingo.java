@@ -16,7 +16,11 @@ public class Bingo extends CasinospielBasis{
 
     @Override
     public String verarbeiteEingabe(String eingabe) {
-        return "";
+        String GLOBAL_STRING = "";
+
+        GLOBAL_STRING += spielfeld.generateBoard();
+
+        return GLOBAL_STRING;
     }
 
     private void drawing(){}

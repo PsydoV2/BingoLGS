@@ -6,11 +6,13 @@ public class DummySpiel extends CasinospielBasis {
 
     @Override
     public String ersteNachricht() {
-        return "Willkommen im Dummy-Spiel.\n" +
-               "Verfügbare Befehle:\n" +
-               "- 'plus X'  → fügt X Jetons hinzu\n" +
-               "- 'minus X' → zieht X Jetons ab\n" +
-               "- 'stand'   → zeigt aktuellen Jetonstand\n";
+        return """
+                Willkommen im Dummy-Spiel.
+                Verfügbare Befehle:
+                - 'plus X'  → fügt X Jetons hinzu
+                - 'minus X' → zieht X Jetons ab
+                - 'stand'   → zeigt aktuellen Jetonstand
+                """;
     }
 
     @Override
