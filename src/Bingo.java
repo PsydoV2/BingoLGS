@@ -6,7 +6,7 @@ public class Bingo extends CasinospielBasis{
     private boolean gameEnd = false;
     private boolean gameWon = false;
     private int einsatz = 0;
-    private int anzDraw = 5;
+    private int anzDraw = 50;
 
     public Bingo(Spieler spieler) {
         super("Bingo", spieler);
@@ -39,6 +39,8 @@ public class Bingo extends CasinospielBasis{
 
         spielfeld.fillList();
         GLOBAL_STRING += drawing();
+
+        GLOBAL_STRING += spielfeld.renderDrawnBoard();
 
         if (gameWon && gameEnd){
             spieler.addJetons(einsatz * 2);
