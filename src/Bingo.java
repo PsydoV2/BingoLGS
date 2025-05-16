@@ -47,9 +47,12 @@ public class Bingo extends CasinospielBasis{
                 }
             }
             if (checkForWin()) {
+                gameWon = true;
                 gameEnd = true;
             }
         }
+        gameEnd = true;
+        gameWon = false;
     }
 
     private boolean checkForWin() {
