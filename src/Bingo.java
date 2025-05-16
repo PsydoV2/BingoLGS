@@ -1,8 +1,6 @@
 import java.util.Random;
-import java.util.Scanner;
 
 public class Bingo extends CasinospielBasis{
-    private Scanner scanner = new Scanner(System.in);
     private Random random = new Random();
     private Spielfeld spielfeld = new Spielfeld();
     private boolean gameEnd = false;

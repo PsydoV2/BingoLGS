@@ -10,4 +10,8 @@ public class Spielfeld {
     public String generateBoard(){
         return "";
     }
+
+    public Feld[][] getSpielFeld() {
+        return spielFeld;
+    }
 }
