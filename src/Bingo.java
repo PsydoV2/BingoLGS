@@ -5,7 +5,7 @@ public class Bingo extends CasinospielBasis {
     private boolean gameEnd = false;
     private boolean gameWon = false;
     private int einsatz = 0;
-    private int anzDraw = 60; // Anzahl der Ziehungen
+    private int anzDraw = 5; // Anzahl der Ziehungen
 
     public Bingo(Spieler spieler) {
         super("Bingo", spieler);
@@ -46,7 +46,7 @@ public class Bingo extends CasinospielBasis {
 
         // Gewinn prüfen und Jetons auszahlen
         if (gameWon && gameEnd){
-            spieler.addJetons(einsatz * 2);
+            spieler.addJetons(einsatz * 3);
         }
 
         return GLOBAL_STRING;

@@ -8,7 +8,7 @@ public class Spielfeld {
     // Füllt die Liste mit Zahlen von 1 bis 99 und mischt sie
     public void fillList(){
         numbers.clear();
-        for(int i = 1; i <= 99; i++){
+        for(int i = 1; i <= 9; i++){
             numbers.add(i);
         }
         Collections.shuffle(numbers);
