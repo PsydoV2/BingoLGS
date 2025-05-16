@@ -6,7 +6,7 @@ public class Bingo extends CasinospielBasis{
     private boolean gameEnd = false;
     private boolean gameWon = false;
     private int einsatz = 0;
-    private int anzDraw = 10;
+    private int anzDraw = 5;
 
     public Bingo(Spieler spieler) {
         super("Bingo", spieler);
@@ -18,6 +18,7 @@ public class Bingo extends CasinospielBasis{
                 ----- Bingo -----\s
                  \
                 Gebe ein wie viele Jetons du setzen möchtest als 'BETRAG' ein.
+                
                 """;
     }
 
@@ -27,8 +28,14 @@ public class Bingo extends CasinospielBasis{
         einsatz = Integer.parseInt(eingabe);
         spieler.removeJetons(einsatz);
 
+        GLOBAL_STRING += "Du hast " + einsatz + " Jetons gesetzt. \n";
+        GLOBAL_STRING += "Dein neues Guthaben: " + spieler.getJetons() + "\n";
+        GLOBAL_STRING += "Dein Bingofeld wurde erstellt:\n";
+
         spielfeld.fillList();
         GLOBAL_STRING += spielfeld.generateBoard();
+
+        GLOBAL_STRING += "\nDie Zahlen werden nun gezogen...\n\n";
 
         spielfeld.fillList();
         GLOBAL_STRING += drawing();
@@ -41,27 +48,40 @@ public class Bingo extends CasinospielBasis{
     }
 
     private String drawing() {
-        String returnString = "";
+        StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < anzDraw; i++) {
-            for (int k = 0; k < spielfeld.getSpielFeld().length; k++) {
-                for (int j = 0; j < spielfeld.getSpielFeld()[j].length; j++) {
-                    if (spielfeld.getSpielFeld()[k][j].getValue() == spielfeld.getRandomNumber()) {
-                        spielfeld.getSpielFeld()[k][j].setDisplayValue("X");
-                        spielfeld.getSpielFeld()[k][j].setGezogen(true);
+            int drawnNumber = spielfeld.getRandomNumber();
+            sb.append("Gezogene Zahl: ").append(drawnNumber).append("\n");
+
+            Feld[][] feld = spielfeld.getSpielFeld();
+            int cols = feld[0].length;
+
+            for (Feld[] felds : feld) {
+                for (int c = 0; c < cols; c++) {
+                    if (felds[c].getValue() == drawnNumber) {
+                        felds[c].setDisplayValue("X");
+                        felds[c].setGezogen(true);
                     }
                 }
             }
+
             if (checkForWin()) {
                 gameWon = true;
                 gameEnd = true;
+                sb.append("BINGO! Du hast gewonnen!\n");
+                break;
             }
         }
-        gameEnd = true;
-        gameWon = false;
 
-        return returnString;
+        if (!gameWon){
+            sb.append("\nDu hast leider verloren!\n");
+        }
+
+        gameEnd = true;
+        return sb.toString();
     }
+
 
     private boolean checkForWin() {
 
