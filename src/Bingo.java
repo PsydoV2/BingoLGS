@@ -6,7 +6,7 @@ public class Bingo extends CasinospielBasis{
     private boolean gameEnd = false;
     private boolean gameWon = false;
     private int einsatz = 0;
-    private int anzDraw = 50;
+    private int anzDraw = 95;
 
     public Bingo(Spieler spieler) {
         super("Bingo", spieler);
@@ -84,65 +84,61 @@ public class Bingo extends CasinospielBasis{
 
 
     private boolean checkForWin() {
+        Feld[][] feld = spielfeld.getSpielFeld();
+        int rows = feld.length;
+        int cols = feld[0].length;
 
-        //horizontal
-
-        for (int k = 0; k < spielfeld.getSpielFeld()[0].length; k++) {
+        // horizontal prüfen
+        for (int row = 0; row < rows; row++) {
             boolean lineCorrect = true;
-            for (int j = 0; j < spielfeld.getSpielFeld()[j].length; j++) {
-                if (!spielfeld.getSpielFeld()[k][j].isGezogen()) {
+            for (int col = 0; col < cols; col++) {
+                if (!feld[row][col].isGezogen()) {
                     lineCorrect = false;
                     break;
                 }
             }
             if (lineCorrect) {
                 return true;
-            }
+            };
         }
 
-        //vertikal
-
-        for (int k = 0; k < spielfeld.getSpielFeld()[0].length; k++) {
+        // vertikal prüfen
+        for (int col = 0; col < cols; col++) {
             boolean lineCorrect = true;
-            for (int j = 0; j < spielfeld.getSpielFeld().length; j++) {
-                if (!spielfeld.getSpielFeld()[k][j].isGezogen()) {
+            for (int row = 0; row < rows; row++) {
+                if (!feld[row][col].isGezogen()) {
                     lineCorrect = false;
                     break;
                 }
             }
             if (lineCorrect) {
                 return true;
-            }
+            };
         }
 
-        //links oben nach rechts unten
-
-        boolean lineCorrectLeftToptoRightBottom = true;
-        for (int j = 0; j < spielfeld.getSpielFeld()[0].length; j++) {
-            if (!spielfeld.getSpielFeld()[j][j].isGezogen()) {
-                lineCorrectLeftToptoRightBottom = false;
+        // Diagonale links oben nach rechts unten
+        boolean leftToRight = true;
+        for (int i = 0; i < rows; i++) {
+            if (!feld[i][i].isGezogen()) {
+                leftToRight = false;
                 break;
             }
         }
-        if (lineCorrectLeftToptoRightBottom) {
+        if (leftToRight) {
             return true;
         }
 
-        //rechts oben nach links unten
-
-        boolean lineCorrectRightToptoLeftBottom = true;
-        for (int j = 0; j < spielfeld.getSpielFeld().length; j++) {
-            if (!spielfeld.getSpielFeld()[j][spielfeld.getSpielFeld().length - 1 - j].isGezogen()) {
-                lineCorrectRightToptoLeftBottom = false;
+        // Diagonale rechts oben nach links unten
+        boolean rightToLeft = true;
+        for (int i = 0; i < rows; i++) {
+            if (!feld[i][cols - 1 - i].isGezogen()) {
+                rightToLeft = false;
                 break;
             }
         }
-        if (lineCorrectRightToptoLeftBottom) {
-            return true;
-        }
-
-        return false;
+        return rightToLeft;
     }
+
 
     @Override
     public void neuesSpiel() {
