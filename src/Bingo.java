@@ -27,20 +27,26 @@ public class Bingo extends CasinospielBasis{
         einsatz = Integer.parseInt(eingabe);
         spieler.removeJetons(einsatz);
 
+        spielfeld.fillList();
         GLOBAL_STRING += spielfeld.generateBoard();
 
+        spielfeld.fillList();
+        GLOBAL_STRING += drawing();
+
         if (gameWon && gameEnd){
-            spieler.addJetons(einsatz * 1);
+            spieler.addJetons(einsatz * 2);
         }
 
         return GLOBAL_STRING;
     }
 
-    private void drawing(int randomNumber) {
+    private String drawing() {
+        String returnString = "";
+
         for (int i = 0; i < anzDraw; i++) {
             for (int k = 0; k < spielfeld.getSpielFeld().length; k++) {
                 for (int j = 0; j < spielfeld.getSpielFeld()[j].length; j++) {
-                    if (spielfeld.getSpielFeld()[k][j].getValue() == randomNumber) {
+                    if (spielfeld.getSpielFeld()[k][j].getValue() == spielfeld.getRandomNumber()) {
                         spielfeld.getSpielFeld()[k][j].setDisplayValue("X");
                         spielfeld.getSpielFeld()[k][j].setGezogen(true);
                     }
@@ -53,6 +59,8 @@ public class Bingo extends CasinospielBasis{
         }
         gameEnd = true;
         gameWon = false;
+
+        return returnString;
     }
 
     private boolean checkForWin() {
