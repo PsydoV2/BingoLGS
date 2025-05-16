@@ -53,17 +53,15 @@ public class Bingo extends CasinospielBasis{
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < anzDraw; i++) {
-            int drawnNumber = spielfeld.getRandomNumber();
-            sb.append("Gezogene Zahl: ").append(drawnNumber).append("\n");
 
-            Feld[][] feld = spielfeld.getSpielFeld();
-            int cols = feld[0].length;
+            int randomNumber = spielfeld.getRandomNumber();
 
-            for (Feld[] felds : feld) {
-                for (int c = 0; c < cols; c++) {
-                    if (felds[c].getValue() == drawnNumber) {
-                        felds[c].setDisplayValue("X");
-                        felds[c].setGezogen(true);
+            for (int k = 0; k < spielfeld.getSpielFeld().length; k++) {
+                for (int j = 0; j < spielfeld.getSpielFeld()[0].length; j++) {
+                    if (spielfeld.getSpielFeld()[k][j].getValue() == randomNumber) {
+                        spielfeld.getSpielFeld()[k][j].setDisplayValue("X");
+                        spielfeld.getSpielFeld()[k][j].setGezogen(true);
+                        break;
                     }
                 }
             }
