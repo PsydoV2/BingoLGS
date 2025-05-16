@@ -30,7 +30,7 @@ public class Bingo extends CasinospielBasis{
         GLOBAL_STRING += spielfeld.generateBoard();
 
         if (gameWon && gameEnd){
-            spieler.addJetons(einsatz * 2);
+            spieler.addJetons(einsatz * 1);
         }
 
         return GLOBAL_STRING;
