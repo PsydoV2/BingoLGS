@@ -1,22 +1,37 @@
-## **Testprotokoll: Bingo-Spiel**
+### **Testprotokoll – Bingo-Spiel**
 
-**Projekt:** Bingo – Konsolenbasiertes Casinospiel
-**Datum:** 16.05.2025
-**Tester:** \[Dein Name]
-**Version:** 1.0
-**Testumgebung:** Windows 10, IntelliJ IDEA 2024.3.5, Java 21 (GraalVM)
+- **Version:** 1.0
+- **Datum:** 2025-06-07
+- **Tester:** *Sebastian Falter*
+- **Spiel:** Bingo (Casinospiel)
+- **Ziel:** Überprüfung der Spielmechanik, Eingabeverarbeitung, Auswertung, Gewinnberechnung
+
+---
 
 ### **Testfallübersicht**
 
-| Nr. | Testziel                         | Eingabe                  | Erwartetes Ergebnis                                         | Ergebnis | Bemerkung                       |
-| --- | -------------------------------- | ------------------------ | ----------------------------------------------------------- | -------- | ------------------------------- |
-| 1   | Spiel startet korrekt            | -                        | Spiel zeigt Startnachricht                                  | ✔️       |                                 |
-| 2   | Einsatz wird gesetzt             | "10"                     | Jetons -10, Spiel startet mit generiertem Bingo-Feld        | ✔️       |                                 |
-| 3   | Feld enthält gültige Zahlen      | -                        | Jedes Feld enthält 1–99, keine Duplikate                    | ✔️       | Zahlen stammen aus `fillList`   |
-| 4   | 60 Ziehungen werden durchgeführt | -                        | 60 Zahlen gezogen oder früher bei Gewinn abgebrochen        | ✔️       | Abbruch bei Gewinn funktioniert |
-| 5   | Gewinn wird korrekt erkannt      | Gezogen: Reihe komplett  | Spiel meldet "BINGO!" und verdoppelt Jetons                 | ✔️       | Getestet mit gezieltem Setup    |
-| 6   | Verlustfall korrekt behandelt    | Keine vollständige Linie | Spiel meldet Verlust                                        | ✔️       |                                 |
-| 7   | Anzeige aktualisiert             | -                        | Gezogene Felder zeigen "X" im finalen Board                 | ✔️       |                                 |
-| 8   | Fehler bei leerer Eingabe        | ""                       | Exception oder Hinweis, dass Eingabe fehlt                  | ❌       | Nicht abgefangen                |
-| 9   | Fehler bei ungültigem Betrag     | "abc"                    | Exception oder Hinweis auf ungültige Eingabe                | ❌       | `Integer.parseInt()` crasht     |
-| 10  | Einsatz > Guthaben               | 999999                   | Hinweis "Nicht genügend Jetons" oder Blockierung des Spiels | ❌       | Noch nicht geprüft              |
+| Nr. | Testziel                         | Eingabe(n)                                            | Erwartetes Ergebnis                                            | Ergebnis    |
+| --- | -------------------------------- | ----------------------------------------------------- | -------------------------------------------------------------- | ----------- |
+| 1   | Einsatz akzeptieren              | `200`                                                 | Spiel akzeptiert Einsatz, fragt nach Ziehungen                 | ✅ Bestanden |
+| 2   | Ungültiger Einsatz               | `-100`                                                | Fehlermeldung „Einsatz muss positiv sein“                      | ✅ Bestanden |
+| 3   | Nicht genug Jetons               | `9999`                                                | Fehlermeldung „Nicht genügend Jetons“                          | ✅ Bestanden |
+| 4   | Ziehungsanzahl gültig            | `5`                                                   | Spiel akzeptiert und fragt nach 1. Reihe                       | ✅ Bestanden |
+| 5   | Ziehungsanzahl ungültig          | `0` oder `12`                                         | Fehlermeldung „zwischen 3 und 9“                               | ✅ Bestanden |
+| 6   | Erste Reihe korrekt              | `1, 2, 3`                                             | Spiel akzeptiert und fragt nach 2. Reihe                       | ✅ Bestanden |
+| 7   | Doppelte Zahl in Reihe           | `4, 4, 5`                                             | Fehlermeldung „Zahlen dürfen sich nicht doppeln“               | ✅ Bestanden |
+| 8   | Zahl mehrfach im Feld            | Reihe 1: `1, 2, 3`, Reihe 2: `3, 4, 5`                | Fehlermeldung „Zahl 3 wurde bereits verwendet“                 | ✅ Bestanden |
+| 9   | Kommazahl / Nicht-Zahl           | `5, a, 6`                                             | Fehlermeldung „Alle Eingaben müssen Zahlen sein“               | ✅ Bestanden |
+| 10  | Zahlen außerhalb Bereich         | `0, 10, 5`                                            | Fehlermeldung „Zahlen müssen zwischen 1 und 9 liegen“          | ✅ Bestanden |
+| 11  | Spielfeld korrekt aufgebaut      | `1,2,3`, `4,5,6`, `7,8,9`                             | Textuelles Bingo-Grid wird ausgegeben                          | ✅ Bestanden |
+| 12  | Ziehung = 5 Zahlen (Standard)    | Ziehungen: `5`                                        | Genau 5 verschiedene Zahlen werden angezeigt                   | ✅ Bestanden |
+| 13  | Treffer im Spielfeld markiert    | gezogene Zahl z. B. `5` → Feld zeigt „X“              | Anzeige mit „X“ an richtigen Stellen im Grid                   | ✅ Bestanden |
+| 14  | Kein Bingo → kein Gewinn         | Kein Reihe/Spalte/Diagonale voll                      | Meldung „Leider kein Bingo. Einsatz verloren“                  | ✅ Bestanden |
+| 15  | Bingo → Gewinn richtig berechnet | Bingo mit 4 Ziehungen bei Einsatz 100                 | Meldung „Gewinn: 600 Jetons“ (Multiplikator 6×)                | ✅ Bestanden |
+| 16  | Bingo mit 3 Ziehungen            | Bingo mit 3 Ziehungen bei Einsatz 200                 | Gewinn: 2000 Jetons                                            | ✅ Bestanden |
+| 17  | Neues Spiel wird zurückgesetzt   | Nach Runde → Eingabe wieder möglich mit neuem Einsatz | Neues Spiel beginnt korrekt mit „Bitte gib deinen Einsatz ein“ | ✅ Bestanden |
+
+---
+
+### ✅ **Fazit**
+
+Das Bingo-Spiel funktioniert stabil, behandelt Eingabefehler korrekt und berechnet Gewinne zuverlässig. Alle getesteten Fälle wurden erfolgreich bestanden.

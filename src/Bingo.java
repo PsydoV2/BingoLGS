@@ -1,13 +1,22 @@
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
+/**
+ * Implementation eines textbasierten Bingo-Spiels.
+ * Der Spieler wählt Einsatz, Anzahl Ziehungen und füllt ein 3x3-Feld.
+ * Ziel ist es, bei der Ziehung eine vollständige Reihe, Spalte oder Diagonale zu treffen.
+ */
 public class Bingo extends CasinospielBasis {
-    private final Spielfeld spielfeld = new Spielfeld();
-    private boolean gameEnd = false;
-    private boolean gameWon = false;
-    private int einsatz = 0;
-    private int anzDraw = 5; // Anzahl der Ziehungen
+
+    // Spielphasen als Zustandsmodell
+    private enum Zustand { EINSATZ, ANZ_ZIEHUNGEN, ERSTE_REIHE, ZWEITE_REIHE, DRITTE_REIHE }
+
+    private Zustand zustand = Zustand.EINSATZ;               // Aktueller Spielzustand
+    private final Spielfeld spielfeld = new Spielfeld();     // Spielfeld (visuelle Darstellung)
+    private int einsatz;                                     // Einsatz in Jetons
+    private int ziehungen = 5;                               // Anzahl der gewünschten Ziehungen (3–9)
+    private int[][] bingoFeld = new int[3][3];               // Vom Spieler gesetzte Bingo-Zahlen
+    private int aktuelleReihe = 0;                           // Fortschritt beim Befüllen der Reihen
+    private final Set<Integer> gezogeneZahlen = new HashSet<>(); // Zufällig gezogene Zahlen
 
     public Bingo(Spieler spieler) {
         super("Bingo", spieler);
@@ -15,168 +24,188 @@ public class Bingo extends CasinospielBasis {
 
     @Override
     public String ersteNachricht() {
-        // Erste Anweisung an den Spieler
-        return """
-                ----- Bingo -----\s
-                 \
-                Gebe ein wie viele Jetons du setzen möchtest und darauf per Komma getrennt die 9 Zahlen der Bingokarte.
-                \n Die Zahlen müssen zwischen 1 und 9 sein und dürfen sich nicht doppeln!
-                \n Bsp.:
-                \n 500, 1, 2, 3, 4, 5, 6, 7, 8, 9
-                \n 500 sind die gsetzten Jetons
-                ---------------------------------------------
-                """;
+        return "Willkommen zu Bingo!\nBitte gib deinen Einsatz (Jetons) ein:";
     }
 
+    /**
+     * Verarbeitet die Nutzereingabe abhängig vom aktuellen Zustand.
+     */
     @Override
     public String verarbeiteEingabe(String eingabe) {
-        String GLOBAL_STRING = "";
-        int[][] eingegebeneBingoZahlen = new int[3][3];
+        if (eingabe == null || eingabe.isBlank()) return "Eingabe darf nicht leer sein.";
 
-        // Eingabe aufteilen
-        String[] teile = eingabe.split(",");
-        if (teile.length != 10) {
-            return "Fehler: Bitte genau 1 Einsatzwert und 9 Bingozahlen angeben.";
-        }
-
-        try {
-            einsatz = Integer.parseInt(teile[0].trim());
-            spieler.removeJetons(einsatz);
-        } catch (NumberFormatException e) {
-            return "Fehler: Einsatz ist keine gültige Zahl.";
-        }
-
-        // Bingo-Zahlen verarbeiten
-        Set<Integer> verwendeteZahlen = new HashSet<>();
-        for (int i = 1; i <= 9; i++) {
-            int zahl;
-            try {
-                zahl = Integer.parseInt(teile[i].trim());
-            } catch (NumberFormatException e) {
-                return "Fehler: '" + teile[i] + "' ist keine gültige Zahl.";
-            }
-
-            if (zahl < 1 || zahl > 9) {
-                return "Fehler: Alle Zahlen müssen zwischen 1 und 9 liegen.";
-            }
-            if (!verwendeteZahlen.add(zahl)) {
-                return "Fehler: Zahl " + zahl + " wurde mehrfach angegeben.";
-            }
-
-            // Position berechnen und eintragen
-            int row = (i - 1) / 3;
-            int col = (i - 1) % 3;
-            eingegebeneBingoZahlen[row][col] = zahl;
-        }
-
-        GLOBAL_STRING += "Du hast " + einsatz + " Jetons gesetzt. \n";
-        GLOBAL_STRING += "Dein neues Guthaben: " + spieler.getJetons() + "\n";
-        GLOBAL_STRING += "Dein Bingofeld wurde erstellt:\n";
-
-        spielfeld.fillList(); // Zahlen vorbereiten
-        GLOBAL_STRING += spielfeld.generateBoard(eingegebeneBingoZahlen); // Nutzerfeld anzeigen
-
-        GLOBAL_STRING += "\nDie Zahlen werden nun gezogen...\n\n";
-
-        spielfeld.fillList(); // Ziehung vorbereiten
-        GLOBAL_STRING += drawing(); // Zahlen ziehen
-
-        GLOBAL_STRING += spielfeld.renderDrawnBoard(); // Finale Anzeige
-
-        if (gameWon && gameEnd) {
-            spieler.addJetons(einsatz * 3);
-        }
-
-        return GLOBAL_STRING;
+        return switch (zustand) {
+            case EINSATZ        -> "\n" + verarbeiteEinsatz(eingabe);
+            case ANZ_ZIEHUNGEN  -> "\n" + verarbeiteZiehungsEingabe(eingabe);
+            case ERSTE_REIHE,
+                 ZWEITE_REIHE,
+                 DRITTE_REIHE   -> "\n" + verarbeiteReihe(eingabe);
+        };
     }
 
+    /**
+     * Liest und prüft den Einsatz. Wechsel in nächste Phase nur bei gültigem Wert.
+     */
+    private String verarbeiteEinsatz(String eingabe) {
+        try {
+            int tempEinsatz = Integer.parseInt(eingabe.trim());
+            if (tempEinsatz <= 0) return "Der Einsatz muss positiv sein.";
+            if (spieler.getJetons() < tempEinsatz) return "Nicht genügend Jetons.";
 
-    private String drawing() {
-        StringBuilder sb = new StringBuilder();
+            einsatz = tempEinsatz;
+            spieler.removeJetons(einsatz);
+            zustand = Zustand.ANZ_ZIEHUNGEN;
+            return "Einsatz: " + einsatz + " Jetons akzeptiert.\nBitte gib die Anzahl der gewünschten Ziehungen ein (zwischen 3 und 9):";
 
-        for (int i = 0; i < anzDraw; i++) {
-            int randomNumber = spielfeld.getRandomNumber(); // Zahl ziehen
+        } catch (NumberFormatException e) {
+            return "Ungültige Eingabe. Bitte gib eine Zahl ein.";
+        }
+    }
 
-            // Alle Felder auf die gezogene Zahl prüfen
-            for (int k = 0; k < spielfeld.getSpielFeld().length; k++) {
-                for (int j = 0; j < spielfeld.getSpielFeld()[0].length; j++) {
-                    if (spielfeld.getSpielFeld()[k][j].getValue() == randomNumber) {
-                        spielfeld.getSpielFeld()[k][j].setDisplayValue("X");
-                        spielfeld.getSpielFeld()[k][j].setGezogen(true);
-                        break; // keine Duplikate in einem Feld
+    /**
+     * Liest die Anzahl der gewünschten Ziehungen und validiert den Bereich (3–9).
+     */
+    private String verarbeiteZiehungsEingabe(String eingabe) {
+        try {
+            int anz = Integer.parseInt(eingabe.trim());
+            if (anz < 3 || anz > 9) return "Bitte gib eine Zahl zwischen 3 und 9 ein.";
+
+            ziehungen = anz;
+            zustand = Zustand.ERSTE_REIHE;
+            return "\nZiehungsanzahl: " + ziehungen + ". Bitte gib die erste Reihe (3 Zahlen 1-9, keine Duplikate, durch Komma getrennt) ein:";
+        } catch (NumberFormatException e) {
+            return "Ungültige Eingabe. Bitte gib eine Zahl ein.";
+        }
+    }
+
+    /**
+     * Verarbeitet die Eingabe einer der drei Reihen. Prüft auf Wertebereich und Duplikate.
+     */
+    private String verarbeiteReihe(String eingabe) {
+        String[] teile = eingabe.split(",");
+        if (teile.length != 3) return "Bitte genau 3 Zahlen eingeben.";
+
+        Set<Integer> reihenZahlen = new HashSet<>();
+
+        for (int i = 0; i < 3; i++) {
+            try {
+                int zahl = Integer.parseInt(teile[i].trim());
+                if (zahl < 1 || zahl > 9) return "Zahlen müssen zwischen 1 und 9 liegen.";
+                if (reihenZahlen.contains(zahl)) return "Zahlen dürfen sich nicht doppeln.";
+
+                // Überprüfung auf globale Duplikate
+                for (int r = 0; r < aktuelleReihe; r++) {
+                    for (int c = 0; c < 3; c++) {
+                        if (bingoFeld[r][c] == zahl) return "Zahl " + zahl + " wurde bereits verwendet.";
                     }
                 }
-            }
 
-            // Prüfen ob durch diese Ziehung ein Gewinn entstanden ist
-            if (checkForWin()) {
-                gameWon = true;
-                gameEnd = true;
-                sb.append("BINGO! Du hast gewonnen!\n");
-                break;
+                reihenZahlen.add(zahl);
+                bingoFeld[aktuelleReihe][i] = zahl;
+
+            } catch (NumberFormatException e) {
+                return "Alle Eingaben müssen Zahlen sein.";
             }
         }
 
-        if (!gameWon){
-            sb.append("\nDu hast leider verloren!\n");
+        // Zustandsübergang je nach Fortschritt
+        aktuelleReihe++;
+        if (aktuelleReihe == 1) {
+            zustand = Zustand.ZWEITE_REIHE;
+            return "Erste Reihe gespeichert. Bitte gib die zweite Reihe ein:";
+        } else if (aktuelleReihe == 2) {
+            zustand = Zustand.DRITTE_REIHE;
+            return "Zweite Reihe gespeichert. Bitte gib die dritte Reihe ein:";
+        } else {
+            return "Dritte Reihe gespeichert. Bingo-Feld vollständig!\n"
+                    + spielfeld.generateBoard(bingoFeld)
+                    + auswerten();
+        }
+    }
+
+    /**
+     * Führt die Ziehungen durch, markiert Treffer, prüft auf Bingo und berechnet ggf. den Gewinn.
+     */
+    private String auswerten() {
+        Random rand = new Random();
+        while (gezogeneZahlen.size() < ziehungen) {
+            gezogeneZahlen.add(rand.nextInt(9) + 1);
         }
 
-        gameEnd = true;
+        // Markiere getroffene Zahlen im Spielfeld
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (gezogeneZahlen.contains(bingoFeld[i][j])) {
+                    spielfeld.spielFeld[i][j].setDisplayValue("X");
+                } else {
+                    spielfeld.spielFeld[i][j].setDisplayValue(String.valueOf(bingoFeld[i][j]));
+                }
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Gezogene Zahlen: ").append(gezogeneZahlen).append("\n");
+        sb.append(spielfeld.renderDrawnBoard());
+
+        boolean bingo = pruefeBingo();
+        if (bingo) {
+            int faktor = switch (ziehungen) {
+                case 3 -> 10;
+                case 4 -> 6;
+                case 5 -> 3;
+                case 6 -> 2;
+                default -> 1;
+            };
+            int gewinn = einsatz * faktor;
+            spieler.addJetons(gewinn);
+            sb.append("BINGO! Du hast gewonnen.\nGewinn: ").append(gewinn).append(" Jetons\n");
+        } else {
+            sb.append("Leider kein Bingo. Einsatz verloren.\n");
+        }
+
+        neuesSpiel();
         return sb.toString();
     }
 
-    private boolean checkForWin() {
-        Feld[][] feld = spielfeld.getSpielFeld();
-        int rows = feld.length;
-        int cols = feld[0].length;
+    /**
+     * Prüft das Spielfeld auf vollständige Treffer in Reihe, Spalte oder Diagonale.
+     */
+    private boolean pruefeBingo() {
+        for (int i = 0; i < 3; i++) {
+            // Reihen
+            if (gezogeneZahlen.contains(bingoFeld[i][0]) &&
+                    gezogeneZahlen.contains(bingoFeld[i][1]) &&
+                    gezogeneZahlen.contains(bingoFeld[i][2]))
+                return true;
 
-        // Zeilen prüfen
-        for (int row = 0; row < rows; row++) {
-            boolean lineCorrect = true;
-            for (int col = 0; col < cols; col++) {
-                if (feld[row][col].isGezogen()) {
-                    lineCorrect = false;
-                    break;
-                }
-            }
-            if (lineCorrect) return true;
+            // Spalten
+            if (gezogeneZahlen.contains(bingoFeld[0][i]) &&
+                    gezogeneZahlen.contains(bingoFeld[1][i]) &&
+                    gezogeneZahlen.contains(bingoFeld[2][i]))
+                return true;
         }
 
-        // Spalten prüfen
-        for (int col = 0; col < cols; col++) {
-            boolean lineCorrect = true;
-            for (int row = 0; row < rows; row++) {
-                if (feld[row][col].isGezogen()) {
-                    lineCorrect = false;
-                    break;
-                }
-            }
-            if (lineCorrect) return true;
-        }
+        // Diagonalen
+        if (gezogeneZahlen.contains(bingoFeld[0][0]) &&
+                gezogeneZahlen.contains(bingoFeld[1][1]) &&
+                gezogeneZahlen.contains(bingoFeld[2][2]))
+            return true;
 
-        // Diagonale: links oben nach rechts unten
-        boolean leftToRight = true;
-        for (int i = 0; i < rows; i++) {
-            if (feld[i][i].isGezogen()) {
-                leftToRight = false;
-                break;
-            }
-        }
-        if (leftToRight) return true;
-
-        // Diagonale: rechts oben nach links unten
-        boolean rightToLeft = true;
-        for (int i = 0; i < rows; i++) {
-            if (feld[i][cols - 1 - i].isGezogen()) {
-                rightToLeft = false;
-                break;
-            }
-        }
-        return rightToLeft;
+        return gezogeneZahlen.contains(bingoFeld[0][2]) &&
+                gezogeneZahlen.contains(bingoFeld[1][1]) &&
+                gezogeneZahlen.contains(bingoFeld[2][0]);
     }
 
+    /**
+     * Setzt das Spiel vollständig zurück.
+     */
     @Override
     public void neuesSpiel() {
-        einsatz = 0; // Einsatz zurücksetzen
+        zustand = Zustand.EINSATZ;
+        aktuelleReihe = 0;
+        einsatz = 0;
+        ziehungen = 5;
+        bingoFeld = new int[3][3];
+        gezogeneZahlen.clear();
     }
 }
