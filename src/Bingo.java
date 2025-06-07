@@ -1,4 +1,6 @@
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 public class Bingo extends CasinospielBasis {
     private final Spielfeld spielfeld = new Spielfeld();
@@ -17,40 +19,77 @@ public class Bingo extends CasinospielBasis {
         return """
                 ----- Bingo -----\s
                  \
-                Gebe ein wie viele Jetons du setzen möchtest als 'BETRAG' ein.
-                
+                Gebe ein wie viele Jetons du setzen möchtest und darauf per Komma getrennt die 9 Zahlen der Bingokarte.
+                \n Die Zahlen müssen zwischen 1 und 9 sein und dürfen sich nicht doppeln!
+                \n Bsp.:
+                \n 500, 1, 2, 3, 4, 5, 6, 7, 8, 9
+                \n 500 sind die gsetzten Jetons
+                ---------------------------------------------
                 """;
     }
 
     @Override
     public String verarbeiteEingabe(String eingabe) {
         String GLOBAL_STRING = "";
+        int[][] eingegebeneBingoZahlen = new int[3][3];
 
-        // Einsatz einlesen und Jetons abziehen
-        einsatz = Integer.parseInt(eingabe);
-        spieler.removeJetons(einsatz);
+        // Eingabe aufteilen
+        String[] teile = eingabe.split(",");
+        if (teile.length != 10) {
+            return "Fehler: Bitte genau 1 Einsatzwert und 9 Bingozahlen angeben.";
+        }
+
+        try {
+            einsatz = Integer.parseInt(teile[0].trim());
+            spieler.removeJetons(einsatz);
+        } catch (NumberFormatException e) {
+            return "Fehler: Einsatz ist keine gültige Zahl.";
+        }
+
+        // Bingo-Zahlen verarbeiten
+        Set<Integer> verwendeteZahlen = new HashSet<>();
+        for (int i = 1; i <= 9; i++) {
+            int zahl;
+            try {
+                zahl = Integer.parseInt(teile[i].trim());
+            } catch (NumberFormatException e) {
+                return "Fehler: '" + teile[i] + "' ist keine gültige Zahl.";
+            }
+
+            if (zahl < 1 || zahl > 9) {
+                return "Fehler: Alle Zahlen müssen zwischen 1 und 9 liegen.";
+            }
+            if (!verwendeteZahlen.add(zahl)) {
+                return "Fehler: Zahl " + zahl + " wurde mehrfach angegeben.";
+            }
+
+            // Position berechnen und eintragen
+            int row = (i - 1) / 3;
+            int col = (i - 1) % 3;
+            eingegebeneBingoZahlen[row][col] = zahl;
+        }
 
         GLOBAL_STRING += "Du hast " + einsatz + " Jetons gesetzt. \n";
         GLOBAL_STRING += "Dein neues Guthaben: " + spieler.getJetons() + "\n";
         GLOBAL_STRING += "Dein Bingofeld wurde erstellt:\n";
 
-        spielfeld.fillList(); // Spielfeld befüllen
-        GLOBAL_STRING += spielfeld.generateBoard(); // Startfeld anzeigen
+        spielfeld.fillList(); // Zahlen vorbereiten
+        GLOBAL_STRING += spielfeld.generateBoard(eingegebeneBingoZahlen); // Nutzerfeld anzeigen
 
         GLOBAL_STRING += "\nDie Zahlen werden nun gezogen...\n\n";
 
-        spielfeld.fillList(); // Neue Zufallszahlen generieren
-        GLOBAL_STRING += drawing(); // Ziehungslogik
+        spielfeld.fillList(); // Ziehung vorbereiten
+        GLOBAL_STRING += drawing(); // Zahlen ziehen
 
-        GLOBAL_STRING += spielfeld.renderDrawnBoard(); // Finales Feld anzeigen
+        GLOBAL_STRING += spielfeld.renderDrawnBoard(); // Finale Anzeige
 
-        // Gewinn prüfen und Jetons auszahlen
-        if (gameWon && gameEnd){
+        if (gameWon && gameEnd) {
             spieler.addJetons(einsatz * 3);
         }
 
         return GLOBAL_STRING;
     }
+
 
     private String drawing() {
         StringBuilder sb = new StringBuilder();

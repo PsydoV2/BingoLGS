@@ -22,14 +22,14 @@ public class Spielfeld {
     }
 
     // Erstellt ein neues Bingo-Feld mit zufälligen Zahlen
-    public String generateBoard() {
+    public String generateBoard(int[][] numbers) {
         int rows = spielFeld.length;
         int cols = spielFeld[0].length;
 
         // Feldzellen mit Zahlen füllen
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                spielFeld[i][j] = new Feld(getRandomNumber());
+                spielFeld[i][j] = new Feld(numbers[i][j]);
             }
         }
 
