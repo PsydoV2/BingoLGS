@@ -13,14 +13,9 @@ public class Bingo extends CasinospielBasis {
     private final Set<Integer> gezogeneZahlen = new HashSet<>();
 
     public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_BLACK = "\u001B[30m";
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_YELLOW = "\u001B[33m";
-    public static final String ANSI_BLUE = "\u001B[34m";
-    public static final String ANSI_PURPLE = "\u001B[35m";
-    public static final String ANSI_CYAN = "\u001B[36m";
-    public static final String ANSI_WHITE = "\u001B[37m";
 
     public Bingo(Spieler spieler) {
         super("Bingo", spieler);
@@ -51,35 +46,36 @@ public class Bingo extends CasinospielBasis {
     private String verarbeiteEinsatz(String eingabe) {
         try {
             int tempEinsatz = Integer.parseInt(eingabe.trim());
-            if (tempEinsatz <= 0) return ANSI_RED + "Der Einsatz muss positiv sein." + ANSI_RESET;
+            if (tempEinsatz <= 0) return ANSI_RED + "Der Einsatz muss positiv sein:" + ANSI_RESET;
             if (spieler.getJetons() < tempEinsatz) return ANSI_RED + "Nicht genügend Jetons." + ANSI_RESET;
 
             einsatz = tempEinsatz;
             spieler.removeJetons(einsatz);
             zustand = Zustand.ANZ_ZIEHUNGEN;
-            return ANSI_GREEN + einsatz + " Jetons akzeptiert." + ANSI_YELLOW + "\nBitte gib die Anzahl der gewünschten Ziehungen ein (zwischen 3 und 9):" + ANSI_RESET;
+            return ANSI_GREEN + einsatz + " Jetons akzeptiert." + ANSI_YELLOW + "\n\nBitte gib die Anzahl der gewünschten Ziehungen ein (zwischen 3 und 9):" + ANSI_RESET;
 
         } catch (NumberFormatException e) {
-            return ANSI_RED + "Ungültige Eingabe. Bitte gib eine Zahl ein." + ANSI_RESET;
+            return ANSI_RED + "Ungültige Eingabe. Bitte gib eine Zahl ein:" + ANSI_RESET;
         }
     }
 
     private String verarbeiteZiehungsEingabe(String eingabe) {
         try {
             int anz = Integer.parseInt(eingabe.trim());
-            if (anz < 3 || anz > 9) return ANSI_RED + "Bitte gib eine Zahl zwischen 3 und 9 ein." + ANSI_RESET;
+            if (anz < 3 || anz > 9) return ANSI_RED + "Bitte gib eine Zahl zwischen 3 und 9 ein:" + ANSI_RESET;
 
             ziehungen = anz;
             zustand = Zustand.ERSTE_REIHE;
-            return ANSI_GREEN + ziehungen + " Ziehungen!" + ANSI_YELLOW + " \nBitte gib die erste Reihe (3 Zahlen 1-9, keine Duplikate, durch Komma getrennt) ein:" + ANSI_RESET;
+            return ANSI_GREEN + ziehungen + " Ziehungen!" + ANSI_YELLOW + " \n\nBitte gib die erste Reihe (3 Zahlen 1-9, keine Duplikate, durch Komma getrennt) ein:" + ANSI_RESET;
         } catch (NumberFormatException e) {
-            return ANSI_RED + "Ungültige Eingabe. Bitte gib eine Zahl ein." + ANSI_RESET;
+            return ANSI_RED + "Ungültige Eingabe. Bitte gib eine Zahl ein:" + ANSI_RESET;
         }
     }
 
     private String verarbeiteReihe(String eingabe) {
+        eingabe = eingabe.replace(" ", "");
         String[] teile = eingabe.split(",");
-        if (teile.length != 3) return ANSI_RED + "Bitte genau 3 Zahlen eingeben." + ANSI_RESET;
+        if (teile.length != 3) return ANSI_RED + "Bitte genau 3 Zahlen eingeben:" + ANSI_RESET;
 
         Set<Integer> reihenZahlen = new HashSet<>();
         for (int i = 0; i < 3; i++) {
@@ -105,12 +101,12 @@ public class Bingo extends CasinospielBasis {
         aktuelleReihe++;
         if (aktuelleReihe == 1) {
             zustand = Zustand.ZWEITE_REIHE;
-            return ANSI_GREEN + "Erste Reihe gespeichert." + ANSI_YELLOW + " \nBitte gib die zweite Reihe ein:";
+            return ANSI_GREEN + "Erste Reihe gespeichert." + ANSI_YELLOW + " \n\nBitte gib die zweite Reihe ein:";
         } else if (aktuelleReihe == 2) {
             zustand = Zustand.DRITTE_REIHE;
-            return ANSI_GREEN + "Zweite Reihe gespeichert." + ANSI_YELLOW + " \nBitte gib die dritte Reihe ein:";
+            return ANSI_GREEN + "Zweite Reihe gespeichert." + ANSI_YELLOW + " \n\nBitte gib die dritte Reihe ein:";
         } else {
-            return ANSI_GREEN + "Dritte Reihe gespeichert. \nBingo-Feld vollständig!\n" + ANSI_RESET
+            return ANSI_GREEN + "Dritte Reihe gespeichert. \n\nBingo-Feld vollständig!\n" + ANSI_RESET
                     + spielfeld.generateBoard(bingoFeld)
                     + auswerten();
         }
@@ -133,11 +129,12 @@ public class Bingo extends CasinospielBasis {
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append(ANSI_RED +"""
-                ╔════════════════════════════╗
-                ║ 🎯 Gezogene Zahlen 🎯     ║
-                ╚════════════════════════════╝
-                """ + ANSI_RESET);
+        sb.append(ANSI_RED + "\n" +
+                """
+                ╔═══════════════════════════╗
+                    🎯 Gezogene Zahlen 🎯   \s
+                ╚═══════════════════════════╝
+               \s""" + ANSI_RESET);
         sb.append(gezogeneZahlen).append("\n\n");
         sb.append(spielfeld.renderDrawnBoard());
 
@@ -152,7 +149,7 @@ public class Bingo extends CasinospielBasis {
             };
             int gewinn = einsatz * faktor;
             spieler.addJetons(gewinn);
-            sb.append(ANSI_GREEN + "🟩🟩🟩  B I N G O !  🟩🟩🟩\n");
+            sb.append(ANSI_GREEN + "\n🟩🟩🟩  B I N G O !  🟩🟩🟩\n");
             sb.append("Glückwunsch! Du hast eine vollständige Reihe.\n");
             sb.append("💰 Gewinn: ").append(gewinn).append(" Jetons 💰\n" + ANSI_RESET);
         } else {

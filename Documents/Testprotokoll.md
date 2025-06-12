@@ -11,7 +11,7 @@
 ### **Testfallübersicht**
 
 | Nr. | Testziel                         | Eingabe(n)                                            | Erwartetes Ergebnis                                            | Ergebnis    |
-| --- | -------------------------------- | ----------------------------------------------------- | -------------------------------------------------------------- | ----------- |
+|-----|----------------------------------|-------------------------------------------------------|----------------------------------------------------------------|-------------|
 | 1   | Einsatz akzeptieren              | `200`                                                 | Spiel akzeptiert Einsatz, fragt nach Ziehungen                 | ✅ Bestanden |
 | 2   | Ungültiger Einsatz               | `-100`                                                | Fehlermeldung „Einsatz muss positiv sein“                      | ✅ Bestanden |
 | 3   | Nicht genug Jetons               | `9999`                                                | Fehlermeldung „Nicht genügend Jetons“                          | ✅ Bestanden |
@@ -32,6 +32,6 @@
 
 ---
 
-### ✅ **Fazit**
+### **Fazit**
 
 Das Bingo-Spiel funktioniert stabil, behandelt Eingabefehler korrekt und berechnet Gewinne zuverlässig. Alle getesteten Fälle wurden erfolgreich bestanden.

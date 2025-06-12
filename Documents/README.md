@@ -1,9 +1,5 @@
 # 🎲 Bingo – Konsolenbasiertes Casinospiel
 
-Dies ist ein textbasiertes Bingo-Spiel, das im Rahmen eines Ausbildungsprojekts entwickelt wurde.  
-Ziel ist es, durch Setzen von Jetons und geschickte Auswahl von Zahlen ein **Bingo** (volle Reihe, Spalte oder Diagonale) zu erreichen.
-
----
 
 ## Spielablauf
 

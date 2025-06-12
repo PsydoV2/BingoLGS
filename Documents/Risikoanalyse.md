@@ -2,10 +2,9 @@
 
 ### Risikoanalyse
 
-Bei der Entwicklung und Durchführung des Bingo-Spiels wurden potenzielle Risiken sowohl für den technischen Ablauf als auch im Hinblick auf das Spielerlebnis identifiziert und berücksichtigt.
 
 | Risiko                                     | Bewertung       | Maßnahmen zur Vermeidung / Minderung                                                                    |
-| ------------------------------------------ | --------------- | ------------------------------------------------------------------------------------------------------- |
+|--------------------------------------------|-----------------|---------------------------------------------------------------------------------------------------------|
 | **Fehleingaben durch Nutzer**              | mittel          | Genaue Eingabeprüfung mit Fehlermeldungen in jeder Phase                                                |
 | **Manipulation durch gezielte Zahlenwahl** | gering          | Spieler muss alle 9 Zahlen manuell eingeben – ohne Wiederholungen oder Wahrscheinlichkeitsbeeinflussung |
 | **Fehlende Zufälligkeit der Ziehung**      | gering          | Zufallszahlen werden per `Random`-Klasse aus eindeutig begrenztem Zahlenbereich (1–9) gezogen           |

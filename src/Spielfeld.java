@@ -19,9 +19,9 @@ public class Spielfeld {
         StringBuilder sb = new StringBuilder();
 
         sb.append("""
-               ╔═══════════════════════════════╗
-               ║           B I N G O           ║
-               ╠═════════╦═════════╦═══════════╣
+               ╔═════════════════════════════╗
+               ║           B I N G O         ║
+               ╠═════════╦═════════╦═════════╣
                """);
 
         for (int i = 0; i < 3; i++) {
@@ -32,9 +32,9 @@ public class Spielfeld {
                 sb.append("  ").append(val).append("  ║");
             }
             if (i < 2) {
-                sb.append("\n╠═════════╬═════════╬═══════════╣\n");
+                sb.append("\n╠═════════╬═════════╬═════════╣\n");
             } else {
-                sb.append("\n╚═════════╩═════════╩═══════════╝\n");
+                sb.append("\n╚═════════╩═════════╩═════════╝\n");
             }
         }
 
