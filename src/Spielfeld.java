@@ -1,70 +1,55 @@
-/**
- * Repräsentiert ein 3x3-Spielfeld für das Bingo-Spiel.
- * Enthält Methoden zur Initialisierung, Darstellung und Verwaltung gezogener Zahlen.
- */
 public class Spielfeld {
-
-    public Feld[][] spielFeld = new Feld[3][3];         // 3x3-Feld bestehend aus Feld-Objekten
-    private final String TRENNERVERT = "|";             // Zeichen für vertikale Trennung der Spalten
-
-
+    public Feld[][] spielFeld = new Feld[3][3];
 
     /**
-     * Erstellt das Spielbrett visuell aus einem 3x3-Zahlenarray.
-     * Wandelt die Zahlen in Feld-Objekte um.
-     *
-     * @param numbers Das vom Spieler gesetzte Bingo-Feld
-     * @return Das formattierte Spielfeld als String
+     * Initialisiert das Spielbrett mit Zahlen.
      */
     public String generateBoard(int[][] numbers) {
-        int rows = spielFeld.length;
-        int cols = spielFeld[0].length;
-
-        // Feld initialisieren mit neuen Zahlen
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++)
                 spielFeld[i][j] = new Feld(numbers[i][j]);
-            }
-        }
 
-        // Feld visuell darstellen
+        return renderDrawnBoard();
+    }
+
+    /**
+     * Gibt das Spielbrett mit gezogenen Zahlen (X) als ASCII-Art zurück.
+     */
+    public String renderDrawnBoard() {
         StringBuilder sb = new StringBuilder();
-        String horizontalLine = "—".repeat(cols * 8); // horizontale Linie zur Trennung
 
-        sb.append(horizontalLine).append("\n");
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                sb.append(TRENNERVERT).append("\t")
-                        .append(spielFeld[i][j].getDisplayValue()).append("\t");
+        sb.append("""
+               ╔═══════════════════════════════╗
+               ║           B I N G O           ║
+               ╠═════════╦═════════╦═══════════╣
+               """);
+
+        for (int i = 0; i < 3; i++) {
+            sb.append("║");
+            for (int j = 0; j < 3; j++) {
+                String val = spielFeld[i][j].getDisplayValue();
+                val = formatCell(val);
+                sb.append("  ").append(val).append("  ║");
             }
-            sb.append(TRENNERVERT).append("\n").append(horizontalLine).append("\n");
+            if (i < 2) {
+                sb.append("\n╠═════════╬═════════╬═══════════╣\n");
+            } else {
+                sb.append("\n╚═════════╩═════════╩═══════════╝\n");
+            }
         }
 
         return sb.toString();
     }
 
     /**
-     * Gibt das Spielfeld nach der Ziehung zurück,
-     * wobei gezogene Zahlen mit "X" markiert wurden.
-     *
-     * @return Das aktuelle Spielfeld mit Treffern
+     * Formatiert Zahlen bzw. X zentriert auf 5 Zeichen.
      */
-    public String renderDrawnBoard() {
-        int rows = spielFeld.length;
-        int cols = spielFeld[0].length;
-
-        StringBuilder sb = new StringBuilder();
-        String horizontalLine = "—".repeat(cols * 8);
-
-        sb.append(horizontalLine).append("\n");
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                sb.append(TRENNERVERT).append("\t")
-                        .append(spielFeld[i][j].getDisplayValue()).append("\t");
-            }
-            sb.append(TRENNERVERT).append("\n").append(horizontalLine).append("\n");
-        }
-
-        return sb.toString();
+    private String formatCell(String val) {
+        if (val.equals("X")) return "  X  ";
+        return switch (val.length()) {
+            case 1 -> "  " + val + "  ";
+            case 2 -> " " + val + "  ";
+            default -> val;
+        };
     }
 }
