@@ -1,12 +1,11 @@
 /**
  * Repräsentiert ein einzelnes Feld im Bingo-Spielfeld.
- * Jedes Feld enthält eine Zahl, eine Markierung (gezogen oder nicht)
- * und einen Anzeige-String (z. B. "X" statt Zahl, wenn gezogen).
+ * und einen Anzeige-String (z.B. "X" statt Zahl, wenn gezogen).
  */
 public class Feld {
 
     private int value;               // Ursprünglicher Zahlenwert des Feldes
-    private String displayValue;     // String zur Anzeige (z. B. "X" statt Zahl)
+    private String displayValue;     // String zur Anzeige (z.B. "X" statt Zahl)
 
     /**
      * Konstruktor: Initialisiert das Feld mit einem Zahlenwert.
