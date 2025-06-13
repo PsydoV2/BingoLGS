@@ -1,8 +1,8 @@
 ### **Testprotokoll – Bingo-Spiel**
 
-- **Version:** 1.0
-- **Datum:** 2025-06-07
-- **Tester:** *Sebastian Falter*
+- **Version:** 2.0
+- **Datum:** 11/06/2025
+- **Tester:** *Sebastian Falter*, *Julius Maximilian Ostmann*
 - **Spiel:** Bingo (Casinospiel)
 - **Ziel:** Überprüfung der Spielmechanik, Eingabeverarbeitung, Auswertung, Gewinnberechnung
 

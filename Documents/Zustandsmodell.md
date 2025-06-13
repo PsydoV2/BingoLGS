@@ -22,23 +22,3 @@ private enum Zustand {
     DRITTE_REIHE
 }
 ```
-
----
-
-## Ablaufdiagramm (Textform)
-
-```plaintext
-Spielstart
-   ↓
-[EINSATZ]
-   ↓
-[ANZ_ZIEHUNGEN]
-   ↓
-[ERSTE_REIHE]
-   ↓
-[ZWEITE_REIHE]
-   ↓
-[DRITTE_REIHE]
-   ↓
-→ automatische Auswertung (inkl. Ziehung, Anzeige, Gewinnprüfung)
-```
