@@ -2,54 +2,49 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        CasinospielBasis bingo = new Bingo(new Spieler("", 100));
+        CasinospielBasis bingo = new Bingo(new Spieler("Max Mustermann", 100));
         Scanner scanner = new Scanner(System.in);
 
-        boolean gameRunning = true;
-        String jetonsEinsatz = "";
-        String anzahlZiehungen = "";
-        String reihenInput = "";
-        String checkString = "";
 
-        while(gameRunning){
+        String jetonsEinsatz;
+        String anzahlZiehungen;
+        String reihenInput;
+        String checkString;
 
-            do {
-                System.out.print(bingo.ersteNachricht());
-                jetonsEinsatz = scanner.nextLine();
-                checkString = bingo.verarbeiteEingabe(jetonsEinsatz);
-                System.out.println(checkString);
-            }while (!checkString.contains("akzeptiert"));
+        System.out.print(bingo.ersteNachricht());
 
-            do{
-                anzahlZiehungen = scanner.nextLine();
-                checkString = bingo.verarbeiteEingabe(anzahlZiehungen);
-                System.out.print(checkString);
-            }while (!checkString.contains("Ziehungen"));
+        do {
+            jetonsEinsatz = scanner.nextLine();
+            checkString = bingo.verarbeiteEingabe(jetonsEinsatz);
+            System.out.print(checkString);
+        }while (!checkString.contains("akzeptiert"));
 
-            do{
+        do{
+            anzahlZiehungen = scanner.nextLine();
+            checkString = bingo.verarbeiteEingabe(anzahlZiehungen);
+            System.out.print(checkString);
+        }while (!checkString.contains("Ziehungen"));
 
-                reihenInput = scanner.nextLine();
-                checkString = bingo.verarbeiteEingabe(reihenInput);
-                System.out.println(checkString);
-            }while(!checkString.contains("gespeichert"));
+        do{
 
-            do{
+            reihenInput = scanner.nextLine();
+            checkString = bingo.verarbeiteEingabe(reihenInput);
+            System.out.print(checkString);
+        }while(!checkString.contains("gespeichert"));
 
-                reihenInput = scanner.nextLine();
-                checkString = bingo.verarbeiteEingabe(reihenInput);
-                System.out.println(checkString);
-            }while(!checkString.contains("gespeichert"));
+        do{
 
-            do{
+            reihenInput = scanner.nextLine();
+            checkString = bingo.verarbeiteEingabe(reihenInput);
+            System.out.print(checkString);
+        }while(!checkString.contains("gespeichert"));
 
-                reihenInput = scanner.nextLine();
-                checkString = bingo.verarbeiteEingabe(reihenInput);
-                System.out.println(checkString);
-            }while(!checkString.contains("gespeichert"));
+        do{
 
-            System.out.println("Möchtest du eine weitere Runde spielen? (yes/no)");
-            gameRunning = scanner.next().equals("yes");
-        }
+            reihenInput = scanner.nextLine();
+            checkString = bingo.verarbeiteEingabe(reihenInput);
+            System.out.print(checkString);
+        }while(!checkString.contains("gespeichert"));
 
     }
 }
