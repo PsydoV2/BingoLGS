@@ -2,25 +2,30 @@ import java.util.*;
 
 public class Bingo extends CasinospielBasis {
 
+    // Spielphasen
     private enum Zustand { EINSATZ, ANZ_ZIEHUNGEN, ERSTE_REIHE, ZWEITE_REIHE, DRITTE_REIHE }
 
+    // Spielstatus und -daten
     private Zustand zustand = Zustand.EINSATZ;
     private final Spielfeld spielfeld = new Spielfeld();
     private int einsatz;
     private int ziehungen = 5;
-    private int[][] bingoFeld = new int[3][3];
-    private int aktuelleReihe = 0;
-    private final Set<Integer> gezogeneZahlen = new HashSet<>();
+    private int[][] bingoFeld = new int[3][3];          // Spielerfeld mit Zahlen 1–9
+    private int aktuelleReihe = 0;                      // Zähler für eingegebene Reihen
+    private final Set<Integer> gezogeneZahlen = new HashSet<>();  // Zufallsziehungen
 
+    // ANSI-Farbcodes für Konsole
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_YELLOW = "\u001B[33m";
 
+    // Konstruktor
     public Bingo(Spieler spieler) {
         super("Bingo", spieler);
     }
 
+    // Begrüßungstext bei Spielstart
     @Override
     public String ersteNachricht() {
         return ANSI_YELLOW +"""
@@ -33,6 +38,7 @@ public class Bingo extends CasinospielBasis {
                """ + ANSI_YELLOW + "\nGib deinen Einsatz (Jetons) ein:" + ANSI_RESET;
     }
 
+    // Verarbeitung der Spielereingaben je nach Zustand
     @Override
     public String verarbeiteEingabe(String eingabe) {
         if (eingabe == null || eingabe.isBlank()) return ANSI_RED + "Eingabe darf nicht leer sein." + ANSI_RESET;
@@ -43,6 +49,7 @@ public class Bingo extends CasinospielBasis {
         };
     }
 
+    // Einsatz verarbeiten und Validierung
     private String verarbeiteEinsatz(String eingabe) {
         try {
             int tempEinsatz = Integer.parseInt(eingabe.trim());
@@ -59,6 +66,7 @@ public class Bingo extends CasinospielBasis {
         }
     }
 
+    // Ziehungsanzahl verarbeiten und validieren
     private String verarbeiteZiehungsEingabe(String eingabe) {
         try {
             int anz = Integer.parseInt(eingabe.trim());
@@ -72,6 +80,7 @@ public class Bingo extends CasinospielBasis {
         }
     }
 
+    // Verarbeite eine der drei Zahlenreihen
     private String verarbeiteReihe(String eingabe) {
         eingabe = eingabe.replace(" ", "");
         String[] teile = eingabe.split(",");
@@ -84,6 +93,7 @@ public class Bingo extends CasinospielBasis {
                 if (zahl < 1 || zahl > 9) return ANSI_RED + "Zahlen müssen zwischen 1 und 9 liegen." + ANSI_RESET;
                 if (reihenZahlen.contains(zahl)) return ANSI_RED + "Zahlen dürfen sich nicht doppeln." + ANSI_RESET;
 
+                // Verhindere Duplikate im ganzen Feld
                 for (int r = 0; r < aktuelleReihe; r++) {
                     for (int c = 0; c < 3; c++) {
                         if (bingoFeld[r][c] == zahl) return ANSI_RED + "Zahl " + zahl + " wurde bereits verwendet." + ANSI_RESET;
@@ -98,6 +108,7 @@ public class Bingo extends CasinospielBasis {
             }
         }
 
+        // Nächste Spielphase
         aktuelleReihe++;
         if (aktuelleReihe == 1) {
             zustand = Zustand.ZWEITE_REIHE;
@@ -106,18 +117,21 @@ public class Bingo extends CasinospielBasis {
             zustand = Zustand.DRITTE_REIHE;
             return ANSI_GREEN + "Zweite Reihe gespeichert." + ANSI_YELLOW + " \n\nBitte gib die dritte Reihe ein:";
         } else {
+            // Alle Reihen fertig: auswerten
             return ANSI_GREEN + "Dritte Reihe gespeichert. \n\nBingo-Feld vollständig!\n" + ANSI_RESET
                     + spielfeld.generateBoard(bingoFeld)
                     + auswerten();
         }
     }
 
+    // Ziehungen durchführen und Spielfeld anzeigen
     private String auswerten() {
         Random rand = new Random();
         while (gezogeneZahlen.size() < ziehungen) {
             gezogeneZahlen.add(rand.nextInt(9) + 1);
         }
 
+        // Spiel-Feld mit "X" markieren
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (gezogeneZahlen.contains(bingoFeld[i][j])) {
@@ -138,6 +152,7 @@ public class Bingo extends CasinospielBasis {
         sb.append(gezogeneZahlen).append("\n\n");
         sb.append(spielfeld.renderDrawnBoard());
 
+        // Prüfe auf Bingo
         boolean bingo = pruefeBingo();
         if (bingo) {
             int faktor = switch (ziehungen) {
@@ -161,6 +176,7 @@ public class Bingo extends CasinospielBasis {
         return sb.toString();
     }
 
+    // Prüft, ob irgendwo Bingo (Reihe, Spalte, Diagonale) erreicht wurde
     private boolean pruefeBingo() {
         for (int i = 0; i < 3; i++) {
             if (gezogeneZahlen.contains(bingoFeld[i][0]) &&
@@ -179,6 +195,7 @@ public class Bingo extends CasinospielBasis {
                 gezogeneZahlen.contains(bingoFeld[2][0]));
     }
 
+    // Rücksetzen für neues Spiel
     @Override
     public void neuesSpiel() {
         zustand = Zustand.EINSATZ;

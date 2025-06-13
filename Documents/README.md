@@ -12,6 +12,14 @@
 
 ---
 
+## Diagramme
+
+### UML
+![alt text](./UML_Bingo.svg)
+
+### Ablaufdiagramm
+![ablaufdiagram](./Aktivitätsdiagramm.png)
+
 ## Dokumentation
 
 - [`📋 Spielphasen & Zustandsmodell`](./Zustandsmodell.md)  

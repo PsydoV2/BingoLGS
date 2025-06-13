@@ -14,27 +14,38 @@ public class Main {
         while(gameRunning){
 
             do {
-                System.out.print("\n" + bingo.ersteNachricht());
-                jetonsEinsatz = scanner.next();
+                System.out.print(bingo.ersteNachricht());
+                jetonsEinsatz = scanner.nextLine();
                 checkString = bingo.verarbeiteEingabe(jetonsEinsatz);
                 System.out.println(checkString);
             }while (!checkString.contains("akzeptiert"));
 
             do{
-                anzahlZiehungen = scanner.next();
+                anzahlZiehungen = scanner.nextLine();
                 checkString = bingo.verarbeiteEingabe(anzahlZiehungen);
                 System.out.print(checkString);
-            }while (!checkString.equals("Ziehungen"));
+            }while (!checkString.contains("Ziehungen"));
 
+            do{
 
-            for (int i = 0; i < 2; i++){
-                do{
+                reihenInput = scanner.nextLine();
+                checkString = bingo.verarbeiteEingabe(reihenInput);
+                System.out.println(checkString);
+            }while(!checkString.contains("gespeichert"));
 
-                    reihenInput = scanner.next();
-                    checkString = bingo.verarbeiteEingabe(reihenInput);
-                    System.out.println(checkString);
-                }while(!checkString.contains("gespeichert"));
-            }
+            do{
+
+                reihenInput = scanner.nextLine();
+                checkString = bingo.verarbeiteEingabe(reihenInput);
+                System.out.println(checkString);
+            }while(!checkString.contains("gespeichert"));
+
+            do{
+
+                reihenInput = scanner.nextLine();
+                checkString = bingo.verarbeiteEingabe(reihenInput);
+                System.out.println(checkString);
+            }while(!checkString.contains("gespeichert"));
 
             System.out.println("Möchtest du eine weitere Runde spielen? (yes/no)");
             gameRunning = scanner.next().equals("yes");
